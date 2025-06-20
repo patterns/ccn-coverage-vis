@@ -1,3 +1,0 @@
-[submodule "models/ccn-coverage-models"]
-	path = models/ccn-coverage-models
-	url = https://github.com/Local-Connectivity-Lab/ccn-coverage-models.git
