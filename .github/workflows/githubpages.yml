@@ -26,6 +26,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       BASE_URL: ${{ github.event.repository.name }}
+      VITE_API_URL: ${{ secrets.VITE_API_URL }}
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
