@@ -272,7 +272,7 @@ function MapView(props: {
         return response.json();
       })
       .then(data => {
-        data.result.forEach(row => {
+        data.result.forEach((row: any) => {
           const marker = new Marker({ scale: 0.5, color: '#006400' });
           marker.setLngLat([row.longitude, row.latitude])
                 .setPopup(new Popup().setHTML(`<strong>${row.name}</strong><p>${row.address}</p>`));
