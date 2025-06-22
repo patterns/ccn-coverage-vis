@@ -11,6 +11,7 @@ import {
   addProtocol,
   getRTLTextPluginStatus,
   setRTLTextPlugin,
+  Marker,
 } from "maplibre-gl";
 import {
   type Accessor,
@@ -259,6 +260,27 @@ function MapView(props: {
         paint: {
           "raster-resampling": "nearest",
         },
+      });
+    }
+    // guard to restrict markers to the seattle map tiles
+    if (tileset.getMaplibreSourceUrl().includes("seattlemax")) {
+      // request the sites list from the api/be
+      fetch(import.meta.env.VITE_API_URL +"/sites").then(response => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then(data => {
+        data.result.forEach(row => {
+          const marker = new Marker({ scale: 0.5, color: '#006400' });
+          marker.setLngLat([row.longitude, row.latitude])
+                .setPopup(new Popup().setHTML(`<strong>${row.name}</strong><p>${row.address}</p>`));
+          marker.addTo(map);
+        });
+      })
+      .catch(error => {
+        console.error('Error fetching data:', error);
       });
     }
   };
