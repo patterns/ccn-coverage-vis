@@ -42,7 +42,8 @@ declare module "solid-js" {
 }
 
 function editable(row: any, apiurl: string) {
-  // make edit fields for popup and the client javascript
+  // for site markers, allow edit fields.
+  // site id can be exposed when it is uuid, but hardcoded here for now
 
   const edhtml = `<div id="editsite-${row.id}">
 <input type="text" value="${row.name}" class="edit-name" disabled />
@@ -50,29 +51,28 @@ function editable(row: any, apiurl: string) {
 <input type="text" value="${row.longitude}" class="edit-longitude" disabled />
 <input type="text" value="${row.latitude}" class="edit-latitude" disabled/>
 <input type="text" value="${row.status}" class="edit-status"/>
-<br/>
+<br/><!--  inline on-click handler is for demonstration purposes (normally, the handler script is separated.)  -->
 <button class="px-4 btn-primary cursor-pointer" type="button" onClick='
-const runtimeFieldValue = document.querySelector("#editsite-${row.id} input.edit-status");
-console.log("DEBUG: " + runtimeFieldValue.value);
-'>Update</button>
-</div>`;
-/*********************
+
+const runtimeFieldStatus = document.querySelector("#editsite-${row.id} input.edit-status");
+const sid = "site-" + String(${row.id}).padStart(2, "0");
 const requestOptions = {
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
-     id: "site-0${row.id}",
+     id: sid,
      name: "${row.name}",
      address: "${row.address}",
      longitude: ${row.longitude},
      latitude: ${row.latitude},
-     status: runtimeFieldValue.value,
+     status: runtimeFieldStatus.value,
     })
 };
-fetch(apiurl, requestOptions);
+fetch("${apiurl}", requestOptions);
+
 '>Update</button>
 </div>`;
-********/
+
   const p = new Popup();
   p.setHTML(edhtml);
   return p;
@@ -311,7 +311,7 @@ function MapView(props: {
         data.result.forEach((row: any) => {
           const marker = new Marker({ scale: 0.5, color: '#006400' });
           marker.setLngLat([row.longitude, row.latitude])
-                .setPopup(editable(row, import.meta.env.VITE_API_URL +"/sites"));
+                .setPopup(editable(row, import.meta.env.VITE_API_URL +"/sites/0"));
           marker.addTo(map);
         });
       })
