@@ -41,6 +41,42 @@ declare module "solid-js" {
   }
 }
 
+function editable(row: any, apiurl: string) {
+  // make edit fields for popup and the client javascript
+
+  const edhtml = `<div id="editsite-${row.id}">
+<input type="text" value="${row.name}" class="edit-name" disabled />
+<input type="text" value="${row.address}" class="edit-address" disabled />
+<input type="text" value="${row.longitude}" class="edit-longitude" disabled />
+<input type="text" value="${row.latitude}" class="edit-latitude" disabled/>
+<input type="text" value="${row.status}" class="edit-status"/>
+<br/>
+<button class="px-4 btn-primary cursor-pointer" type="button" onClick='
+const runtimeFieldValue = document.querySelector("#editsite-${row.id} input.edit-status");
+console.log("DEBUG: " + runtimeFieldValue.value);
+'>Update</button>
+</div>`;
+/*********************
+const requestOptions = {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+     id: "site-0${row.id}",
+     name: "${row.name}",
+     address: "${row.address}",
+     longitude: ${row.longitude},
+     latitude: ${row.latitude},
+     status: runtimeFieldValue.value,
+    })
+};
+fetch(apiurl, requestOptions);
+'>Update</button>
+</div>`;
+********/
+  const p = new Popup();
+  p.setHTML(edhtml);
+  return p;
+}
 function MapView(props: {
   tileset: Accessor<Tileset>;
   showMetadata: Accessor<boolean>;
@@ -275,7 +311,7 @@ function MapView(props: {
         data.result.forEach((row: any) => {
           const marker = new Marker({ scale: 0.5, color: '#006400' });
           marker.setLngLat([row.longitude, row.latitude])
-                .setPopup(new Popup().setHTML(`<strong>${row.name}</strong><p>${row.address}</p>`));
+                .setPopup(editable(row, import.meta.env.VITE_API_URL +"/sites"));
           marker.addTo(map);
         });
       })
